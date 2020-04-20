@@ -1,0 +1,13 @@
+{
+  "name": "systemico/jmail",
+  "description": "Micro library to send email notifications using different platforms like Mailgun, MailJet and others..",
+  "version": "1.0",
+  "type": "library",
+  "license": "Apache-2.0",
+  "require": {
+      "php": "^7.0",
+      "mailgun/mailgun-php": "3.0.0",
+      "kriswallsmith/buzz": "^1.0",
+      "nyholm/psr7": "^1.1"
+  }
+}
