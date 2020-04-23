@@ -1,7 +1,6 @@
 <?php
 namespace Systemico;
 
-require_once dirname(__FILE__).'/../vendor/autoload.php';
 use Mailgun\Mailgun;
 
 /**

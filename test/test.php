@@ -1,8 +1,10 @@
 <?php
 /**
- * Example with Mailgun
+ * JMail example with Mailgun
  * @author Edwin Ariza <edwin.ariza@systemico.co>
+ * @copyright Systemico Software S.A.S
  */
+
 require_once (__DIR__."/../vendor/autoload.php");
 
 use Systemico\JMail;
