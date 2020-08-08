@@ -10,7 +10,7 @@ Micro library to send email notifications using different platforms like Mailgun
     $jmail->credentials('[PRIVATE_API_KEY]', '[DOMAIN]', '[SENDER]',JMail::$MAILGUN,'[NAME_SENDER]');
     $jmail->send('[EMAIL_TO]','Hello World!','My firts Email HTML','My first mail TEXT');
 
-## Examplewith MailJet
+## Example with MailJet
     require_once (__DIR__."/../vendor/autoload.php");
 
     use Systemico\JMail;
