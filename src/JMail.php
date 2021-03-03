@@ -3,6 +3,10 @@ namespace Systemico;
 
 use Mailgun\Mailgun;
 use \Mailjet\Resources;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\SMTP;
+
 
 /**
  * Clase encargada del envió masivo de correos.
@@ -11,11 +15,13 @@ class JMail{
     private $api_key;
     private $domain;
     private $sender;
+    private $sender_password="";
     private $service;
     private $name="";
     private $name_to="";
     public static $MAILGUN='MAILGUN';
     public static $MAILJET='MAILJET';
+    public static $PHPMAILER='PHPMAILER';
   /**
    * Permite la definición de credenciales requeridas para la operación del la librería.
    * @param $api Key del servicio a utilizar, puede ser array
@@ -33,6 +39,21 @@ class JMail{
       $this->name_to=$name_to;
     }
   /**
+   * Permite la definición de credenciales requeridas para la operación del la librería.
+   * @param $api Key del servicio a utilizar, puede ser array
+   * @param $domain Dominio al que está vinculada la petición.
+   * @param $sender Información de quien remite el correo, y que aparecerá como remisor.
+   * @param $service --> Tipo de servicio a utilizar JMail::$MAILGUN
+   * @param $name Nombre de la cuenta que remite el correo.
+   */
+  public function credentials_mailer($sender, $sender_password, $name="", $name_to=""){
+    $this->sender = $sender;
+    $this->sender_password = $sender_password;
+    $this->service = JMail::$PHPMAILER;
+    $this->name = $name;
+    $this->name_to = $name_to;
+  }
+  /**
    * @param $email_to Destinatario del mensaje.
    * @param $subject  Asunto del mensaje
    * @param $content Contenido del mensaje
@@ -48,6 +69,9 @@ class JMail{
       }
       if($this->service == JMail::$MAILJET){
         $this->send_mailjet($email_to,$subject,$content,$altbody,$tag);
+      }
+      if($this->service == JMail::$PHPMAILER){
+       $this->send_mailer($email_to, $subject, $content, $altbody, $tag);
       }
     }
 
@@ -104,5 +128,43 @@ class JMail{
     ];
     $response = $mj->post(Resources::$Email, ['body' => $body]);
     $response->success() && var_dump($response->getData());
+  }
+  /**
+   * @param $email_to Destinatario del mensaje.
+   * @param $subject  Asunto del mensaje
+   * @param $content Contenido del mensaje
+   * @param string $altbody Mensaje altbody, aparece en el preview del mensaje
+   * @param string $name Nombre del remitente en caso que se quiera personalizar como Carlos Ariza <carlos.ariza@systemico.co>
+   * @param string $tag Etiqueta para marcar el correo.
+   */
+  public function send_mailer($email_to,$subject,$content,$altbody="", $tag=""){
+    echo "Sending Email with PHPMailer to ($email_to) the subject ($subject)...";
+    //Instantiation and passing `true` enables exceptions
+    $mail = new PHPMailer(true);
+    try {
+      //Server settings
+      $mail->SMTPDebug = SMTP::DEBUG_OFF;                      //Enable verbose debug output
+      $mail->isSMTP();                                            //Send using SMTP
+      $mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
+      $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
+      $mail->Username   = $this->sender;                     //SMTP username
+      $mail->Password   = $this->sender_password;                               //SMTP password
+      $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         //Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
+      $mail->Port       = 587;                                    //TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
+
+      //Recipients
+      $mail->setFrom($this->sender, $this->name);
+      $mail->addAddress($email_to, $this->name_to);     //Add a recipient
+
+      //Content
+      $mail->isHTML(true);                                  //Set email format to HTML
+      $mail->Subject = $subject;
+      $mail->Body    = $content;
+      $mail->AltBody = $altbody;
+
+      $mail->send();
+    } catch (Exception $e) {
+      echo "Message could not be sent. PHP Mailer Error: {$mail->ErrorInfo}";
+    }
   }
 }

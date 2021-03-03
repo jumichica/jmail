@@ -18,3 +18,7 @@ $jmail->send('[EMAIL_TO]','Hello World!','My firts Email HTML','My first mail TE
 // Mensaje con MailJet
 $jmail->credentials(array('[API_KEY]','[SECRET_API_KEY]'), '[DOMAIN]', '[SENDER]',JMail::$MAILJET,'[NAME_SENDER]');
 $jmail->send('[EMAIL_TO]','Hello World!','My firts Email HTML','My first mail TEXT');
+
+// Mensaje con PHPMailer
+$jmail->credentials_mailer('[EMAIL_FROM]', '[EMAIL_FROM_PASSWORD]', '[NAME]', 'NAME_TO');
+$jmail->send('[EMAIL_TO]','Hello World!','My firts Email HTML','My first mail TEXT');
