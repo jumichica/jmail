@@ -22,6 +22,7 @@ class JMail{
     public static $MAILGUN='MAILGUN';
     public static $MAILJET='MAILJET';
     public static $PHPMAILER='PHPMAILER';
+    public static $DEBUG= false;
   /**
    * Permite la definición de credenciales requeridas para la operación del la librería.
    * @param $api Key del servicio a utilizar, puede ser array
@@ -30,13 +31,14 @@ class JMail{
    * @param $service --> Tipo de servicio a utilizar JMail::$MAILGUN
    * @param $name Nombre de la cuenta que remite el correo.
    */
-    public function credentials($api_key, $domain, $sender, $service, $name="", $name_to=""){
+    public function credentials($api_key, $domain, $sender, $service, $name="", $name_to="", $debug=false){
       $this->api_key=$api_key;
       $this->domain=$domain;
       $this->sender=$sender;
       $this->service=$service;
       $this->name=$name;
       $this->name_to=$name_to;
+      JMail::$DEBUG=$debug;
     }
   /**
    * Permite la definición de credenciales requeridas para la operación del la librería.
@@ -46,12 +48,13 @@ class JMail{
    * @param $service --> Tipo de servicio a utilizar JMail::$MAILGUN
    * @param $name Nombre de la cuenta que remite el correo.
    */
-  public function credentials_mailer($sender, $sender_password, $name="", $name_to=""){
+  public function credentials_mailer($sender, $sender_password, $name="", $name_to="", $debug=false){
     $this->sender = $sender;
     $this->sender_password = $sender_password;
     $this->service = JMail::$PHPMAILER;
     $this->name = $name;
     $this->name_to = $name_to;
+    JMail::$DEBUG=$debug;
   }
   /**
    * @param $email_to Destinatario del mensaje.
@@ -84,6 +87,8 @@ class JMail{
    * @param string $tag Etiqueta para marcar el correo.
    */
     public function send_mailgun($email_to,$subject,$content,$altbody="", $tag=""){
+      if (JMail::$DEBUG)
+        echo "Enviando con Mailgun";
       $mg = Mailgun::create($this->api_key);
       $domain = $this->domain;
       $params = array(
@@ -104,7 +109,8 @@ class JMail{
    * @param string $tag Etiqueta para marcar el correo.
    */
   public function send_mailjet($email_to,$subject,$content,$altbody="", $tag=""){
-    echo "Enviando con MailJet";
+    if (JMail::$DEBUG)
+      echo "Enviando con MailJet";
     $mj = new \Mailjet\Client($this->api_key[0],$this->api_key[1],true,['version' => 'v3.1']);
     $body = [
       'Messages' => [
@@ -138,13 +144,16 @@ class JMail{
    * @param string $tag Etiqueta para marcar el correo.
    */
   public function send_mailer($email_to,$subject,$content,$altbody="", $tag=""){
-    echo "Sending Email with PHPMailer to ($email_to) the subject ($subject)...";
+    if (JMail::$DEBUG)
+      echo "Sending Email with PHPMailer to ($email_to) the subject ($subject)...";
     //Instantiation and passing `true` enables exceptions
     $mail = new PHPMailer(true);
     try {
       //Server settings
       $mail->SMTPDebug = SMTP::DEBUG_OFF;                      //Enable verbose debug output
-      $mail->isSMTP();                                            //Send using SMTP
+      $mail->isSMTP();
+      $mail->CharSet = 'UTF-8';
+      //Send using SMTP
       $mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
       $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
       $mail->Username   = $this->sender;                     //SMTP username
