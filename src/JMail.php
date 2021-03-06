@@ -7,7 +7,6 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\SMTP;
 
-
 /**
  * Clase encargada del envió masivo de correos.
  */
@@ -19,6 +18,7 @@ class JMail{
     private $service;
     private $name="";
     private $name_to="";
+    private $smtp_server="";
     public static $MAILGUN='MAILGUN';
     public static $MAILJET='MAILJET';
     public static $PHPMAILER='PHPMAILER';
@@ -48,12 +48,13 @@ class JMail{
    * @param $service --> Tipo de servicio a utilizar JMail::$MAILGUN
    * @param $name Nombre de la cuenta que remite el correo.
    */
-  public function credentials_mailer($sender, $sender_password, $name="", $name_to="", $debug=false){
+  public function credentials_mailer($sender, $sender_password, $name="", $name_to="", $smtp_server='smtp.gmail.com',  $debug=false){
     $this->sender = $sender;
     $this->sender_password = $sender_password;
     $this->service = JMail::$PHPMAILER;
     $this->name = $name;
     $this->name_to = $name_to;
+    $this->smtp_server = $smtp_server;
     JMail::$DEBUG=$debug;
   }
   /**
@@ -88,7 +89,7 @@ class JMail{
    */
     public function send_mailgun($email_to,$subject,$content,$altbody="", $tag=""){
       if (JMail::$DEBUG)
-        echo "Enviando con Mailgun";
+        echo "Sending Email with MAILGUN to ($email_to) the subject ($subject)...";
       $mg = Mailgun::create($this->api_key);
       $domain = $this->domain;
       $params = array(
@@ -110,7 +111,7 @@ class JMail{
    */
   public function send_mailjet($email_to,$subject,$content,$altbody="", $tag=""){
     if (JMail::$DEBUG)
-      echo "Enviando con MailJet";
+      echo "Sending Email with MAILJET to ($email_to) the subject ($subject)...";
     $mj = new \Mailjet\Client($this->api_key[0],$this->api_key[1],true,['version' => 'v3.1']);
     $body = [
       'Messages' => [
@@ -149,28 +150,26 @@ class JMail{
     //Instantiation and passing `true` enables exceptions
     $mail = new PHPMailer(true);
     try {
-      //Server settings
-      $mail->SMTPDebug = SMTP::DEBUG_OFF;                      //Enable verbose debug output
+      //SERVER SETTINGS
+      $mail->SMTPDebug = JMail::$DEBUG;                         //Enable verbose debug output
       $mail->isSMTP();
       $mail->CharSet = 'UTF-8';
-      //Send using SMTP
-      $mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
-      $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
-      $mail->Username   = $this->sender;                     //SMTP username
+      //SEND USING SMTP
+      $mail->Host       = $this->smtp_server;                     //Set the SMTP server to send through
+      $mail->SMTPAuth   = true;                                 //Enable SMTP authentication
+      $mail->Username   = $this->sender;                        //SMTP username
       $mail->Password   = $this->sender_password;                               //SMTP password
-      $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         //Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
-      $mail->Port       = 587;                                    //TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
-
-      //Recipients
+      $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;       //Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
+      $mail->Port       = 587;                                  //TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
+      //RECIPIENTS
       $mail->setFrom($this->sender, $this->name);
-      $mail->addAddress($email_to, $this->name_to);     //Add a recipient
-
-      //Content
-      $mail->isHTML(true);                                  //Set email format to HTML
+      $mail->addAddress($email_to, $this->name_to);             //Add a recipient
+      //CONTENT OF EMAIL
+      $mail->isHTML(true);                               //Set email format to HTML
       $mail->Subject = $subject;
       $mail->Body    = $content;
       $mail->AltBody = $altbody;
-
+      //SENDING YUJU...
       $mail->send();
     } catch (Exception $e) {
       echo "Message could not be sent. PHP Mailer Error: {$mail->ErrorInfo}";

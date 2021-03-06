@@ -27,8 +27,17 @@ Micro library to send email notifications using different platforms like Mailgun
 
     $jmail= new JMail();
     // Mensaje con PHPMailer
-    $jmail->credentials_mailer('[EMAIL_FROM]', '[EMAIL_FROM_PASSWORD]', '[NAME]', 'NAME_TO');
+    $jmail->credentials_mailer('[EMAIL_FROM]', '[EMAIL_FROM_PASSWORD]', '[NAME]', 'NAME_TO', 'SMTP SERVER');
     $jmail->send('[EMAIL_TO]','Hello World!','My firts Email HTML','My first mail TEXT');
+
+# DEBUG activation
+The last parameter con credentials method lect activate the debug, if you want. Let me show you a example:
+
+    // DEBUG False
+    $jmail->credentials_mailer('[EMAIL_FROM]', '[EMAIL_FROM_PASSWORD]', '[NAME]', 'NAME_TO', 'SMTP SERVER');
+
+    // DEBUG true
+    $jmail->credentials_mailer('[EMAIL_FROM]', '[EMAIL_FROM_PASSWORD]', '[NAME]', 'NAME_TO', 'SMTP SERVER', true);
 
 ## Contributors
 Edwin Ariza <me@edwinariza.com>
