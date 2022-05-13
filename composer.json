@@ -1,9 +1,9 @@
 {
-  "name": "systemico/jmail",
+  "name": "jumichica/jmail",
   "description": "Micro library to send email notifications using different platforms like Mailgun, MailJet and others.",
   "authors": [{
-    "name": "Edwin Ariza",
-    "email": "me@edwinariza.com"
+    "name": "Jumichica",
+    "email": "developer@jumichica.com"
   }],
   "version": "1.5.3",
   "type": "library",
