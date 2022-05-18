@@ -1,5 +1,5 @@
 <?php
-namespace Systemico;
+namespace Jumichica;
 
 use Mailgun\Mailgun;
 use \Mailjet\Resources;
@@ -62,7 +62,7 @@ class JMail{
    * @param $subject  Asunto del mensaje
    * @param $content Contenido del mensaje
    * @param string $altbody Mensaje altbody, aparece en el preview del mensaje
-   * @param string $name Nombre del remitente en caso que se quiera personalizar como Carlos Ariza <carlos.ariza@systemico.co>
+   * @param string $name Nombre del remitente en caso que se quiera personalizar como Developer <developer@jumichica.com>
    * @param string $tag Etiqueta para marcar el correo.
    * @throws ErrorException
    * @throws \Mailgun\Messages\Exceptions\MissingRequiredMIMEParameters
