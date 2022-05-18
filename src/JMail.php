@@ -67,7 +67,8 @@ class JMail{
    * @throws ErrorException
    * @throws \Mailgun\Messages\Exceptions\MissingRequiredMIMEParameters
    */
-    public function send($email_to,$subject,$content,$altbody="", $tag=""){
+  public function send($email_to,$subject,$content,$altbody="", $tag="", $opened_action=''){
+      $content = $content. '<img src="'.$opened_action.'" alt="..." style="display:none;">';
       if($this->service == JMail::$MAILGUN){
         $this->send_mailgun($email_to,$subject,$content,$altbody,$tag);
       }
@@ -172,7 +173,9 @@ class JMail{
       //SENDING YUJU...
       $mail->send();
     } catch (Exception $e) {
-      echo "Message could not be sent. PHP Mailer Error: {$mail->ErrorInfo}";
+      echo "Message could not be sent. PHP Mailer Error: {
+          $mail->ErrorInfo
+          }";
     }
   }
 }
