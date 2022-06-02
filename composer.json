@@ -5,7 +5,7 @@
     "name": "Jumichica",
     "email": "developer@jumichica.com"
   }],
-  "version": "1.6.1",
+  "version": "1.6.2",
   "type": "library",
   "license": "Apache-2.0",
   "require": {
