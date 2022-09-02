@@ -5,11 +5,11 @@
     "name": "Jumichica",
     "email": "developer@jumichica.com"
   }],
-  "version": "1.6.3",
+  "version": "1.6.4",
   "type": "library",
   "license": "Apache-2.0",
   "require": {
-    "php": "^7.2 || ^8.0.0",
+    "php": "^7.2",
     "mailgun/mailgun-php": "^3.0.0",
     "kriswallsmith/buzz": "^1.0",
     "nyholm/psr7": "^1.1",
